@@ -1,85 +1,80 @@
-## Balance Sheet Reconciliation
+<p align="center">
+  <a href="https://grow.empress.eco/"><strong>Explore the Documentation »</strong></a>
+  <br>
+  <a href="https://github.com/empress-eco/balance_sheet_reconciliation/issues">Report Bug</a>
+  ·
+  <a href="https://github.com/empress-eco/balance_sheet_reconciliation/issues">Request Feature</a>
+</p>
 
-In ERPNext, it is currently possible to reconcile only receivable and payable account through Payment Reconciliation tool, in which, internally the system will create gl matching pair called `Payment Ledger Entry`.
+## Table of Contents
+- [Table of Contents](#table-of-contents)
+- [About The Project](#about-the-project)
+  - [Overview](#overview)
+  - [Key Features](#key-features)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+- [Usage](#usage)
+- [Contributing](#contributing)
+- [License and Acknowledgements](#license-and-acknowledgements)
+  - [License](#license)
+  - [Acknowledgements](#acknowledgements)
 
-But in some cases, user still need to reconcile other type of balance sheet account as well. For example, tax entries that need to reconcile with tax paid to revenue department.
+## About The Project
 
-With the requirement, this module provides a separated reconciliation option for any selected BS account's GL Entries.
+### Overview
+The Empress Balance Sheet Reconciliation module for Empress offers a unique solution for reconciling General Ledger (GL) Entries of any selected balance sheet account. It caters to a wide range of balance sheet accounts beyond just receivable and payable accounts - a perfect tool for entities like tax entries that require reconciliation with payments made to revenue departments.
 
-## Installation
+### Key Features
+- Enables reconciliation for any selected Balance Sheet account's GL Entries.
+- Supports manual and automatic reconciliation.
+- Allows for unreconciliation of already reconciled entries.
+- For full reconciliations, the system issues a Full Reconcile Number linking each group of reconciled GL Entries together.
 
-```
-$ cd frappe-bench
-$ bench get-app https://github.com/kittiu/bs_reconcile
-$ bench install-app bs_reconcile
-```
+## Getting Started
 
-## Usage Guide
+### Prerequisites
+- Empress software
 
-There are a lot of use case and balance sheet account that we can put this reconciliation tool into use. In this guide, we will use a VAT account to demonstrate.
+### Installation
 
-### Account Setup
+To install the Empress Balance Sheet Reconciliation module, follow these steps:
 
-Open Chart of Account and edit VAT and check Allow Reconcile.
+1. Open your terminal
+2. Change the current working directory to your local Empress instance
 
-Note: When GL Entries of this account is created, they will be marked, is_reconcile = True and residual amount to be reconciled = debit-credit.
+    ```sh
+    $ cd empress-bench
+    ```
+3. Clone the repository
 
-![Selection_175](https://github.com/kittiu/bs_reconcile/assets/1973598/6b6b6c1f-db97-4dd7-9748-9a0efc07c830)
+    ```sh
+    $ bench get-app https://github.com/empress-eco/balance_sheet_reconciliation.git
+    ```
+4. Install the application
 
-### Create transactions with amount to be reconciled
+    ```sh
+    $ bench install-app balance_sheet_reconciliation
+    ```
 
-Lets test by create a sales invoice with VAT (100 + 7 = 107). The GL Entry for VAT will created with initial residual = 7 to be reconciled.
+## Usage
+Our comprehensive usage guide, included in the `README.md` file, provides a step-by-step walkthrough on how to use the Empress Balance Sheet Reconciliation module. This guide demonstrates usage with a VAT account as an example.
 
-![Selection_176](https://github.com/kittiu/bs_reconcile/assets/1973598/11e33964-0742-42da-951f-ea01a7618f73)
+## Contributing
+We welcome contributions! Here's how you can contribute:
 
-Note: Let's create couple more sales invoices for demonstration
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-### Balance Sheet Reconciliation
+## License and Acknowledgements
 
-To reconcile, open Balance Sheet Reconciliation window, select Reconcile Account = VAT and click on Get Unreconciled Entries. Unreconciled Entries section will list all open items.
+### License
+This project is licensed under the MIT License.
 
-![Selection_177](https://github.com/kittiu/bs_reconcile/assets/1973598/09bbca94-5b96-4ca0-bc7a-764cec904bf0)
+### Acknowledgements
+We would like to express our sincere gratitude to the Empress Community for their groundbreaking contributions to the tools that constitute the backbone of this project. Their innovation and dedication have been instrumental in building the foundations and functionalities we rely on. We are profoundly grateful for their pioneering work and ongoing support.
 
-In the picture, there are some open credit entries but still no open debit entries to reconcile. Click Reconcile button now will just show the warning message.
-
-For a simplified sample, create a journal entry with Debit VAT = open reconcile amount.
-
-![Selection_183](https://github.com/kittiu/bs_reconcile/assets/1973598/736af1e0-3903-4144-af56-8b4fd154720e)
-
-Back to Balance Sheet Reconciliation again, now they are ready to reconcile.
-
-![Selection_178](https://github.com/kittiu/bs_reconcile/assets/1973598/1b3b524e-b1ea-49a2-ab55-38d07a033f64)
-
-Select sum debit equal to sum credit and click on Reconcile button. Once reconciled, system will create `Partial Reconcile Entries` to keep track of reconciliation.
-
-Now, Partial Recocile Entry (report view) shows each GL/Voucher reconcile pair.
-
-![Selection_179](https://github.com/kittiu/bs_reconcile/assets/1973598/39d3d09e-9561-49b2-ad18-9a06ca1ec842)
-
-In case of full reconcile (no residual left), system will issue Full Reconcile Number, for which purpose is to link each group of reconciled GL Entries together.
-
-![Selection_181](https://github.com/kittiu/bs_reconcile/assets/1973598/6774023b-033f-4123-9eef-9a7128827014)
-
-### Unreconcile GL Entries
-
-In the opposite way, user can also unreconcile the already reconciled entries. The unreconcile process can occur in various ways,
-
-1. Document cancellation
-2. Delete reconcile pair, Partial Reconcile Entry
-3. Delete Full Reconcile Number which in turn delete related Partial Reconcile Entries
-3. Manual unreconcile selected GL Entry
-
-![Selection_182](https://github.com/kittiu/bs_reconcile/assets/1973598/62538229-26de-49d9-9633-eb1f2a46db94)
-
-Whatever the way used, internally, it is the Partial Reconcile Entry that has been removed and reconcile data gets updated.
-
-### Remarks
-
-* This method of reconciliation use `Partial Reconcile Entry` doctype to keep track of reconciled amount at the GL Entry level.
-* As such, GL Entry now has section that display its unreconciled amount (residual).
-* `Full Reconcile Number` keeps track of all GL Entries that make up a full reconcile group.
-* In this guide, we only do manual reconcile. But in case GL Entry has against_voucher, this can be automatic. This case is true for Invoice to Payment.
-
-#### License
-
-MIT
+Also, special thanks to [@kittiu](https://github.com/kittiu) for creating this helpful tool.
